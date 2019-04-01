@@ -1,0 +1,4 @@
+#image,
+canvas {
+  image-rendering: pixelated;
+}
