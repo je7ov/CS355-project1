@@ -70,22 +70,23 @@ window.onload = () => {
 
   // console.log(YCbCrData[0]);
   // console.log('offsetting data');
-  // offsetData(YCbCrData, true);
+  offsetData(YCbCrData, true);
   // console.log(YCbCrData[0]);
   // console.log('transforming data');
   transformData(YCbCrData, imgData.width, imgData.height, true);
   // console.log(YCbCrData[0]);
   // console.log('quantizing data');
-  // quantizeData(YCbCrData, imgData.width, imgData.height);
+  quantizeData(YCbCrData, imgData.width, imgData.height);
   // console.log(YCbCrData[0]);
+  console.log(block);
   // console.log('unquantizing data');
-  // unquantizeData(YCbCrData, imgData.width, imgData.height);
+  unquantizeData(YCbCrData, imgData.width, imgData.height);
   // console.log(YCbCrData[0]);
   // console.log('untransforming data');
   transformData(YCbCrData, imgData.width, imgData.height, false);
   // console.log(YCbCrData[0]);
   // console.log('offsetting data back');
-  // offsetData(YCbCrData, false);
+  offsetData(YCbCrData, false);
   // console.log(YCbCrData[0]);
 
   for (let i = 0; i < imgData.width; i++) {
@@ -246,7 +247,7 @@ function transformData(YCbCrData, width, height, forwards) {
           }
         }
       }
-      console.log(multResult);
+      // console.log(multResult);
       YCbCrData[n] = multResult;
     }
   }

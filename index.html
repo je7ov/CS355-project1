@@ -6,14 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <link rel="stylesheet" href="./styles/styles.css">
-  <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900|Roboto+Mono" rel="stylesheet">
   <title>JPEG Compression</title>
 </head>
 
 <body>
   <div id="header">
-    <h1>JPEG Compression</h1>
-    <h3>Project 1</h3>
+    <h1 id="title">JPEG Compression</h1>
+    <h3 id="subtitle">Project 1</h3>
   </div>
 
   <div id="content">
@@ -23,7 +23,7 @@
         <p>Computer Science Student almost finishing up my degree</p>
       </div>
       <div class="about-box text-center">
-        <p>Already have experience with HTML, CSS, and Javascript for a while now</p>
+        <p>Already have experience with HTML, CSS, and Javascript for some time now</p>
       </div>
       <div class="about-box text-center">
         <p>Also worked more recently with React.js, Node.js, and Android in the past few years</p>
@@ -32,24 +32,130 @@
 
     <div class="divider"></div>
 
-    <h1 class="text-center">A Brief History of JPEG</h1>
+    <h1 class="text-center">A Very Brief History of JPEG</h1>
     <div class="box-container">
-      <ul class="grow-1 text-center">
+      <ul class="text-center brief-list">
         <li>An image standard created and released in 1992</li>
+        <li>Stands for Joint Photographic Experts Group, the group behind its creation</li>
+        <li>Their intention was to bring better quality graphics to computers of that time</li>
+        <li>Created a lossy compression that would lose some information in color variation that the human eye
+          technically doesn't see very well
+        </li>
       </ul>
       <img src="images/jpeg-logo.png" class="jpeg-logo">
     </div>
+
+    <div class="divider"></div>
+
+    <h1 class="text-center">The Lossy Compression</h1>
+    <p class="text-center">There are three main steps to the basic algorithm</p>
+    <ol class="text-center steps-list">
+      <li>Preprocessing</li>
+      <li>Transforming</li>
+      <li>Quantizing</li>
+    </ol>
+
+    <div class="divider"></div>
+
+    <h1 class="text-center">Preprocessing</h1>
+    <p class="text-center">Translate the data from RGB to YCbCr color space:</p>
+    <div class="formulas-container light-background">
+      <div class="formulas">
+        <p class="formula">Y = (0.299 * R) + (0.587 * G) + (0.114 * B)</p>
+        <p class="formula">C<sub>b</sub> = (-0.168736 * R) + (-0.331264 * G) + (0.5 * B) + 128</p>
+        <p class="formula">C<sub>r</sub> = (0.5 * R) + (-0.418688 * G) + (-0.081312 * B) + 128</p>
+      </div>
+    </div>
+    <br />
+    <p class="text-center">Rest of the algorithm will be applied to 8x8 blocks of pixels</p>
+    <br />
+    <p class="text-center">Offset the data values by 127:</p>
+    <div class="matrix-container">
+      <div class="matrix" id="original-matrix"></div>
+      <h1>&rarr;</h1>
+      <div class="matrix" id="offset-matrix"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h1 class="text-center">Discrete Cosine Transformation (DCT)</h1>
+    <p class="text-center">An important step that transforms each 8x8 chunk of pixels in a way that makes the
+      compression much more effective</p>
+    <p class="text-center">Most important thing to note is that it will create a lot of near zero and zero values</p>
+    <div class="formulas-container light-background">
+      <div class="formulas">
+        <p class="formula">B = UAU<sup>T</sup></p>
+      </div>
+    </div>
+    <p class="text-center">Where A is the 8x8 chunk of pixel data and U is the DCT matrix:</p>
+    <div id="dct-container">
+      <img src="images/dct.PNG" id="dct">
+    </div>
+    <br />
+    <div id="trans-example-container">
+      <img src="images/example-grid.gif">
+      <img src="images/example-transformed.gif">
+    </div>
+    <p class="img-description text-center">images from www.whydomath.org</p>
+    <p class="text-center">Another important aspect of the DCT is that it's orthogonal, which means</p>
+    <div class="formulas-container light-background">
+      <div class="formulas">
+        <p class="formula">U<sup>T</sup> = U<sup>-1</sup></p>
+      </div>
+    </div>
+    <p class="text-center">which can be useful when reversing the process to retrieve the image</p>
+
+    <div class="divider"></div>
+
+    <h1 class="text-center">Quantization</h1>
+    <p class="text-center">
+      The data is now full of irrational numbers and needs to be turned into integer
+      <br />
+      values with the quantization step in order to be encoded easily
+    </p>
+    <p class="text-center">
+      Each element in the 8x8 blocks will be divided by a certain integer and
+      then rounded
+      <br />
+      The following matrix is used for the division:</p>
+    <div class="matrix-container">
+      <div class="matrix" id="divider-matrix"></div>
+    </div>
+
+    <p class="text-center">
+      So dividing and rounding will give us better integers to then encode:
+    </p>
+    <div class="matrix-container">
+      <div class="matrix" id="transform-matrix"></div>
+      <h1>&rarr;</h1>
+      <div class="matrix" id="quantized-matrix"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h1 class="text-center">Summary</h1>
+    <p class="text-center">The only thing left to do is encode the data</p>
+    <h2 class="text-center">
+      Preprocess &rarr; Transform &rarr; Quantize &rarr; Encode
+    </h2>
+    <p class="text-center">
+      To then get the image back is just a matter of doing this whole
+      process backwards
+    </p>
+    <h2 class="text-center">
+      Decode &rarr; Multiply back &rarr; Transform back &rarr; Postprocess back
+    </h2>
+
   </div>
 
-  <script src="scripts/script.js"></script>
-</body>
-
-</html>
-
-
-<!-- <img src="images/lion-small.jpg" id="image" />
+  <!-- <img src="images/landscape-small.jpg" id="image" />
   <canvas id="Y"></canvas>
   <canvas id="Cb"></canvas>
   <canvas id="Cr"></canvas>
   <script src="libs/math.min.js"></script>
   <script src="scripts/main.js"></script> -->
+
+  <script src="scripts/script.js"></script>
+</body>
+
+</html>
