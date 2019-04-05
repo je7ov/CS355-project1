@@ -9,16 +9,15 @@ const dividerArr = [
   72, 92, 95, 98, 112, 100, 103, 99
 ];
 let U = initializeU();
-let img;
-let YCanvas;
-let CbCanvas;
-let CrCanvas;
+let img = document.getElementById('image');
+let YCanvas = document.getElementById('Y');
+let CbCanvas = document.getElementById('Cb');
+let CrCanvas = document.getElementById('Cr');
 
 window.onload = () => {
-  img = document.getElementById('image');
-  YCanvas = document.getElementById('Y');
-  CbCanvas = document.getElementById('Cb');
-  CrCanvas = document.getElementById('Cr');
+  const YContext = YCanvas.getContext('2d');
+  const CbContext = CbCanvas.getContext('2d');
+  const CrContext = CrCanvas.getContext('2d');
 
   YCanvas.width = img.width;
   YCanvas.height = img.height;
@@ -26,10 +25,6 @@ window.onload = () => {
   CbCanvas.height = img.height;
   CrCanvas.width = img.width;
   CrCanvas.height = img.height;
-
-  const YContext = YCanvas.getContext('2d');
-  const CbContext = CbCanvas.getContext('2d');
-  const CrContext = CrCanvas.getContext('2d');
 
   YContext.drawImage(img, 0, 0, YCanvas.width, YCanvas.height);
   let imgData = YContext.getImageData(0, 0, YCanvas.width, YCanvas.height);
@@ -228,6 +223,7 @@ function transformData(YCbCrData, width, height, forwards) {
                 if (k === 0) {
                   const index = (x + j) + (y + m) * height;
                   if (forwards) {
+                    console.log(`forwards [${i}, ${m}] x [${index}]`)
                     sum += U[i][m] * YCbCrData[n][index];
                   } else {
                     sum += U[m][i] * YCbCrData[n][index];
