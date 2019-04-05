@@ -78,7 +78,6 @@ window.onload = () => {
   // console.log('quantizing data');
   quantizeData(YCbCrData, imgData.width, imgData.height);
   // console.log(YCbCrData[0]);
-  console.log(block);
   // console.log('unquantizing data');
   unquantizeData(YCbCrData, imgData.width, imgData.height);
   // console.log(YCbCrData[0]);
@@ -227,18 +226,18 @@ function transformData(YCbCrData, width, height, forwards) {
               let sum = 0;
               for (let m = 0; m < 8; m++) {
                 if (k === 0) {
-                  const index = (x + m) + (y + j) * height;
+                  const index = (x + j) + (y + m) * height;
                   if (forwards) {
                     sum += U[i][m] * YCbCrData[n][index];
                   } else {
-                    sum += U[m][j] * YCbCrData[n][index];
+                    sum += U[m][i] * YCbCrData[n][index];
                   }
                 } else {
-                  const index = (x + i) + (y + m) * width;
+                  const index = (x + m) + (y + i) * width;
                   if (forwards) {
-                    sum += YCbCrData[n][index] * U[m][j];
+                    sum += YCbCrData[n][index] * U[j][m];
                   } else {
-                    sum += YCbCrData[n][index] * U[i][m];
+                    sum += YCbCrData[n][index] * U[m][j];
                   }
                 }
               }
