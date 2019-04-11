@@ -137,15 +137,35 @@
     <div class="demo-btn-container">
       <div class="demo-btn">Lion</div>
       <div class="demo-btn">Landscape</div>
+      <div class="demo-btn">Bokeh</div>
+      <div class="demo-btn">Starry Night</div>
     </div>
 
     <div class="demo-imgs-container">
-      <img src="" class="demo-img hide" id="image" />
-      <canvas id="final" class="demo-img hide"></canvas>
-      <canvas id="Y" class="demo-img hide"></canvas>
-      <canvas id="dct" class="demo-img hide"></canvas>
-      <canvas id="Cb" class="demo-img hide"></canvas>
-      <canvas id="Cr" class="demo-img hide"></canvas>
+      <div class="demo-img hide">
+        <h3>Original</h3>
+        <img src="" id="image" />
+      </div>
+      <div class="demo-img hide">
+        <h3>Output</h3>
+        <canvas id="final" width="480" height="320"></canvas>
+      </div>
+      <div class="demo-img hide">
+        <h3>Output Y</h3>
+        <canvas id="Y" width="480" height="320"></canvas>
+      </div>
+      <div class="demo-img hide">
+        <h3>DCT of Y</h3>
+        <canvas id="dct" width="480" height="320"></canvas>
+      </div>
+      <div class="demo-img hide">
+        <h3>Output C<sub>b</sub></h3>
+        <canvas id="Cb" width="480" height="320"></canvas>
+      </div>
+      <div class="demo-img hide">
+        <h3>Output C<sub>r</sub></h3>
+        <canvas id="Cr" width="480" height="320"></canvas>
+      </div>
     </div>
     <script src="./scripts/main.js"></script>
 

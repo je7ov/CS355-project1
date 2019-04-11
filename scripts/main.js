@@ -16,13 +16,7 @@ let CrCanvas = document.getElementById('Cr');
 let dctCanvas = document.getElementById('dct');
 let finalCanvas = document.getElementById('final');
 
-let JPEGCompress = () => {
-  const YContext = YCanvas.getContext('2d');
-  const CbContext = CbCanvas.getContext('2d');
-  const CrContext = CrCanvas.getContext('2d');
-  const dctContext = dctCanvas.getContext('2d');
-  const finalContext = finalCanvas.getContext('2d');
-
+async function JPEGCompress() {
   YCanvas.width = img.width;
   YCanvas.height = img.height;
   CbCanvas.width = img.width;
@@ -34,7 +28,15 @@ let JPEGCompress = () => {
   finalCanvas.width = img.width;
   finalCanvas.height = img.height;
 
+  const YContext = YCanvas.getContext('2d');
+  const CbContext = CbCanvas.getContext('2d');
+  const CrContext = CrCanvas.getContext('2d');
+  const dctContext = dctCanvas.getContext('2d');
+  const finalContext = finalCanvas.getContext('2d');
+
+
   YContext.drawImage(img, 0, 0, YCanvas.width, YCanvas.height);
+
   let imgData = YContext.getImageData(0, 0, YCanvas.width, YCanvas.height);
   let YCbCrData = [
     [],
@@ -44,14 +46,8 @@ let JPEGCompress = () => {
 
   loadYCbCrData(imgData, YCbCrData);
 
-  // console.log(YCbCrData[0]);
-  // console.log('offsetting data');
   offsetData(YCbCrData, true);
-  // console.log(YCbCrData[0]);
-  // console.log('transforming data');
   transformData(YCbCrData, imgData.width, imgData.height, true);
-
-  console.log(dctCanvas.width, dctCanvas.height);
 
   for (let j = 0; j < imgData.height; j++) {
     for (let i = 0; i < imgData.width; i++) {
@@ -62,19 +58,10 @@ let JPEGCompress = () => {
 
   dctContext.putImageData(imgData, 0, 0);
 
-  // console.log(YCbCrData[0]);
-  // console.log('quantizing data');
   quantizeData(YCbCrData, imgData.width, imgData.height);
-  // console.log(YCbCrData[0]);
-  // console.log('unquantizing data');
   unquantizeData(YCbCrData, imgData.width, imgData.height);
-  // console.log(YCbCrData[0]);
-  // console.log('untransforming data');
   transformData(YCbCrData, imgData.width, imgData.height, false);
-  // console.log(YCbCrData[0]);
-  // console.log('offsetting data back');
   offsetData(YCbCrData, false);
-  // console.log(YCbCrData[0]);
 
   for (let j = 0; j < imgData.height; j++) {
     for (let i = 0; i < imgData.width; i++) {
@@ -245,8 +232,12 @@ const demoButtons = Array.from(document.getElementsByClassName('demo-btn'));
 for (let [i, btn] of demoButtons.entries()) {
   btn.onclick = () => demoButtonClick(i);
 }
+const demoImages = Array.from(document.getElementsByClassName('demo-img'));
+
 const lionImg = './images/lion-small.jpg';
 const landscapeImg = './images/landscape-small.jpg';
+const bokehImg = './images/bokeh-blur-small.jpg';
+const starryNightImg = './images/starry-night-small.jpg';
 let activeIndex = -1;
 
 function demoButtonClick(index) {
@@ -257,6 +248,12 @@ function demoButtonClick(index) {
     case 'Landscape':
       demoButtonClicked(index, landscapeImg);
       break;
+    case 'Bokeh':
+      demoButtonClicked(index, bokehImg);
+      break;
+    case 'Starry Night':
+      demoButtonClicked(index, starryNightImg);
+      break;
     default:
       console.log('image not supported');
   }
@@ -265,8 +262,9 @@ function demoButtonClick(index) {
 function demoButtonClicked(index, newImg) {
   if (activeIndex !== index) {
     img.setAttribute('src', newImg);
+    clearCanvases();
     showAll();
-    setTimeout(JPEGCompress, 10);
+    setTimeout(JPEGCompress, 100);
   } else {
     img.setAttribute('src', '');
     hideAll();
@@ -275,21 +273,15 @@ function demoButtonClicked(index, newImg) {
 }
 
 function showAll() {
-  img.setAttribute('class', 'demo-img');
-  YCanvas.setAttribute('class', 'demo-img');
-  CbCanvas.setAttribute('class', 'demo-img');
-  CrCanvas.setAttribute('class', 'demo-img');
-  dctCanvas.setAttribute('class', 'demo-img');
-  finalCanvas.setAttribute('class', 'demo-img');
+  for (image of demoImages) {
+    image.setAttribute('class', 'demo-img');
+  }
 }
 
 function hideAll() {
-  img.setAttribute('class', 'demo-img hide');
-  YCanvas.setAttribute('class', 'demo-img hide');
-  CbCanvas.setAttribute('class', 'demo-img hide');
-  CrCanvas.setAttribute('class', 'demo-img hide');
-  dctCanvas.setAttribute('class', 'demo-img hide');
-  finalCanvas.setAttribute('class', 'demo-img hide');
+  for (image of demoImages) {
+    image.setAttribute('class', 'demo-img hide');
+  }
 }
 
 function setActive(clicked) {
@@ -304,4 +296,16 @@ function setActive(clicked) {
       demoButtons[activeIndex].setAttribute('class', 'demo-btn');
     activeIndex = clicked;
   }
+}
+
+function clearCanvases() {
+  clearCanvas(YCanvas);
+  clearCanvas(CbCanvas);
+  clearCanvas(CrCanvas);
+  clearCanvas(dctCanvas);
+  clearCanvas(finalCanvas);
+}
+
+function clearCanvas(canvas) {
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 }
