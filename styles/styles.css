@@ -13,7 +13,7 @@ body {
 
 #image,
 canvas {
-  image-rendering: pixelated;
+  /* image-rendering: pixelated; */
 }
 
 #header {
@@ -171,6 +171,39 @@ canvas {
   font-size: 0.8em !important;
   font-style: italic;
 }
+
+.demo-btn-container {
+  display: flex;
+  justify-content: center;
+}
+
+.demo-btn {
+  border: 1px solid #879ED4;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 0 8px;
+  color: black;
+  transition: 200ms all ease-in-out;
+}
+
+.demo-btn:hover {
+  background-color: #D3DBEF;
+  color: black;
+  cursor: pointer;
+  transition: 200ms all ease-in-out;
+}
+
+.active {
+  background-color: #60646D;
+  color: white;
+}
+
+.active:hover {
+  background-color: #60646D !important;
+  color: white !important;
+}
+
+.demo-imgs-container {}
 
 @media (min-width: 768px) {
   #content {

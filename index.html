@@ -17,13 +17,6 @@
   </div>
 
   <div id="content">
-    <img src="./images/sample2.png" id="image" />
-    <canvas id="Y"></canvas>
-    <canvas id="Cb"></canvas>
-    <canvas id="Cr"></canvas>
-    <script src="./libs/math.min.js"></script>
-    <script src="./scripts/main.js"></script>
-
     <h1 class="text-center">About Me</h1>
     <div class="box-container">
       <div class="about-box text-center">
@@ -140,6 +133,23 @@
 
     <div class="divider"></div>
 
+    <h1 class="text-center">Interactive Demo</h1>
+    <div class="demo-btn-container">
+      <div class="demo-btn">Lion</div>
+      <div class="demo-btn">Landscape</div>
+    </div>
+
+    <div class="demo-imgs-container">
+      <img src="" id="image" />
+      <canvas id="Y"></canvas>
+      <canvas id="Cb"></canvas>
+      <canvas id="Cr"></canvas>
+      <canvas id="final"></canvas>
+    </div>
+    <script src="./scripts/main.js"></script>
+
+    <div class="divider"></div>
+
     <h1 class="text-center">Summary</h1>
     <p class="text-center">The only thing left to do is encode the data</p>
     <h2 class="text-center">
@@ -152,7 +162,6 @@
     <h2 class="text-center">
       Decode &rarr; Multiply back &rarr; Transform back &rarr; Postprocess back
     </h2>
-
   </div>
 
   <script src="scripts/script.js"></script>

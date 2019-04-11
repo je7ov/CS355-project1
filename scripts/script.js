@@ -97,7 +97,7 @@ function displayMatrix(matrix, container) {
 
     for (let i = 0; i < 8; i++) {
       div = document.createElement('div');
-      div.innerHTML = matrix[i][j];
+      div.textContent = matrix[i][j];
       container.appendChild(div);
     }
 

@@ -13,11 +13,13 @@ let img = document.getElementById('image');
 let YCanvas = document.getElementById('Y');
 let CbCanvas = document.getElementById('Cb');
 let CrCanvas = document.getElementById('Cr');
+let finalCanvas = document.getElementById('final');
 
-window.onload = () => {
+let JPEGCompress = () => {
   const YContext = YCanvas.getContext('2d');
   const CbContext = CbCanvas.getContext('2d');
   const CrContext = CrCanvas.getContext('2d');
+  const finalContext = finalCanvas.getContext('2d');
 
   YCanvas.width = img.width;
   YCanvas.height = img.height;
@@ -25,6 +27,8 @@ window.onload = () => {
   CbCanvas.height = img.height;
   CrCanvas.width = img.width;
   CrCanvas.height = img.height;
+  finalCanvas.width = img.width;
+  finalCanvas.height = img.height;
 
   YContext.drawImage(img, 0, 0, YCanvas.width, YCanvas.height);
   let imgData = YContext.getImageData(0, 0, YCanvas.width, YCanvas.height);
@@ -36,8 +40,21 @@ window.onload = () => {
 
   loadYCbCrData(imgData, YCbCrData);
 
-  for (let i = 0; i < imgData.width; i++) {
-    for (let j = 0; j < imgData.height; j++) {
+  // let example = [
+  //   5, 176, 193, 168, 168, 170, 167, 165,
+  //   6, 176, 158, 172, 162, 177, 168, 151,
+  //   5, 167, 172, 232, 158, 61, 145, 214,
+  //   33, 179, 169, 174, 5, 5, 135, 178,
+  //   8, 104, 180, 178, 172, 197, 188, 169,
+  //   63, 5, 102, 101, 160, 142, 133, 139,
+  //   51, 47, 63, 5, 180, 191, 165, 5,
+  //   49, 53, 43, 5, 184, 170, 168, 74
+  // ];
+
+  // YCbCrData[0] = example;
+
+  for (let j = 0; j < imgData.height; j++) {
+    for (let i = 0; i < imgData.width; i++) {
       const Y = YCbCrData[0][i + j * imgData.width];
       setPixelXY(imgData, i, j, [Y, Y, Y, 255]);
     }
@@ -45,8 +62,8 @@ window.onload = () => {
 
   YContext.putImageData(imgData, 0, 0);
 
-  for (let i = 0; i < imgData.width; i++) {
-    for (let j = 0; j < imgData.height; j++) {
+  for (let j = 0; j < imgData.height; j++) {
+    for (let i = 0; i < imgData.width; i++) {
       const Cb = YCbCrData[1][i + j * imgData.width];
       setPixelXY(imgData, i, j, [Cb, Cb, Cb, 255]);
     }
@@ -54,8 +71,8 @@ window.onload = () => {
 
   CbContext.putImageData(imgData, 0, 0);
 
-  for (let i = 0; i < imgData.width; i++) {
-    for (let j = 0; j < imgData.height; j++) {
+  for (let j = 0; j < imgData.height; j++) {
+    for (let i = 0; i < imgData.width; i++) {
       const Cr = YCbCrData[2][i + j * imgData.width];
       setPixelXY(imgData, i, j, [Cr, Cr, Cr, 255]);
     }
@@ -74,6 +91,16 @@ window.onload = () => {
   quantizeData(YCbCrData, imgData.width, imgData.height);
   // console.log(YCbCrData[0]);
   // console.log('unquantizing data');
+
+  // for (let j = 0; j < imgData.height; j++) {
+  //   for (let i = 0; i < imgData.width; i++) {
+  //     const Cr = YCbCrData[2][i + j * imgData.width];
+  //     setPixelXY(imgData, i, j, [Cr, Cr, Cr, 255]);
+  //   }
+  // }
+
+  // CrContext.putImageData(imgData, 0, 0);
+
   unquantizeData(YCbCrData, imgData.width, imgData.height);
   // console.log(YCbCrData[0]);
   // console.log('untransforming data');
@@ -83,8 +110,8 @@ window.onload = () => {
   offsetData(YCbCrData, false);
   // console.log(YCbCrData[0]);
 
-  for (let i = 0; i < imgData.width; i++) {
-    for (let j = 0; j < imgData.height; j++) {
+  for (let j = 0; j < imgData.height; j++) {
+    for (let i = 0; i < imgData.width; i++) {
       const Y = YCbCrData[0][i + j * imgData.width];
       setPixelXY(imgData, i, j, [Y, Y, Y, 255]);
     }
@@ -92,8 +119,8 @@ window.onload = () => {
 
   YContext.putImageData(imgData, 0, 0);
 
-  for (let i = 0; i < imgData.width; i++) {
-    for (let j = 0; j < imgData.height; j++) {
+  for (let j = 0; j < imgData.height; j++) {
+    for (let i = 0; i < imgData.width; i++) {
       const Cb = YCbCrData[1][i + j * imgData.width];
       setPixelXY(imgData, i, j, [Cb, Cb, Cb, 255]);
     }
@@ -101,8 +128,8 @@ window.onload = () => {
 
   CbContext.putImageData(imgData, 0, 0);
 
-  for (let i = 0; i < imgData.width; i++) {
-    for (let j = 0; j < imgData.height; j++) {
+  for (let j = 0; j < imgData.height; j++) {
+    for (let i = 0; i < imgData.width; i++) {
       const Cr = YCbCrData[2][i + j * imgData.width];
       setPixelXY(imgData, i, j, [Cr, Cr, Cr, 255]);
     }
@@ -111,7 +138,7 @@ window.onload = () => {
   CrContext.putImageData(imgData, 0, 0);
 
   loadRGBData(imgData, YCbCrData);
-  CrContext.putImageData(imgData, 0, 0);
+  finalContext.putImageData(imgData, 0, 0);
 }
 
 function getPixel(imgData, index) {
@@ -148,21 +175,6 @@ function initializeU() {
 }
 
 function loadYCbCrData(imgData, YCbCrData) {
-  // for (let j = 0; j < imgData.height; j++) {
-  //   let rowY = [];
-  //   let rowCb = [];
-  //   let rowCr = [];
-  //   for (let i = 0; i < imgData.width; i++) {
-  //     const p = getPixelXY(imgData, i, j);
-  //     rowY.push(0.299 * p[0] + 0.587 * p[1] + 0.114 * p[2]);
-  //     rowCb.push(-0.168736 * p[0] + -0.331264 * p[1] + 0.5 * p[2] + 128);
-  //     rowCr.push(0.5 * p[0] + -0.418688 * p[1] + -0.081312 * p[2] + 128);
-  //   }
-  //   YCbCrData[0].push(rowY);
-  //   YCbCrData[1].push(rowCb);
-  //   YCbCrData[2].push(rowCr);
-  // }
-  // console.log(YCbCrData[0]);
   for (let i = 0; i < imgData.width * imgData.height; i++) {
     const p = getPixel(imgData, i);
     YCbCrData[0][i] = 0.299 * p[0] + 0.587 * p[1] + 0.114 * p[2];
@@ -175,8 +187,8 @@ function loadRGBData(imgData, YCbCrData) {
   for (let i = 0; i < imgData.width * imgData.height; i++) {
     const p = getPixel(imgData, i);
     p[0] = YCbCrData[0][i] + 1.402 * (YCbCrData[2][i] - 128);
-    p[1] = (YCbCrData[0][i] - 0.344136) * (YCbCrData[1][i] - 128) * (YCbCrData[2][i] - 128);
-    p[2] = (YCbCrData[0][i] + 1.772) * (YCbCrData[1][i] - 128);
+    p[1] = YCbCrData[0][i] - 0.344136 * (YCbCrData[1][i] - 128) - 0.714136 * (YCbCrData[2][i] - 128);
+    p[2] = YCbCrData[0][i] + 1.772 * (YCbCrData[1][i] - 128);
     setPixel(imgData, i, p);
   }
 }
@@ -184,7 +196,11 @@ function loadRGBData(imgData, YCbCrData) {
 function offsetData(YCbCrData, forwards) {
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < YCbCrData[i].length; j++) {
-      YCbCrData[i][j] += forwards ? -127 : 127;
+      if (forwards) {
+        YCbCrData[i][j] = YCbCrData[i][j] - 127;
+      } else {
+        YCbCrData[i][j] = math.min(math.max(math.round(YCbCrData[i][j] + 127), 0), 255);
+      }
     }
   }
 }
@@ -213,7 +229,7 @@ function transformData(YCbCrData, width, height, forwards) {
   let multResult;
   for (let n = 0; n < 3; n++) {
     for (let k = 0; k < 2; k++) {
-      multResult = [];
+      multResult = new Array(YCbCrData[0].length);
       for (let y = 0; y < height; y += 8) {
         for (let x = 0; x < width; x += 8) {
           for (let i = 0; i < 8; i++) {
@@ -221,9 +237,13 @@ function transformData(YCbCrData, width, height, forwards) {
               let sum = 0;
               for (let m = 0; m < 8; m++) {
                 if (k === 0) {
-                  const index = (x + j) + (y + m) * height;
+                  const index = (y + m) * width + (x + j);
                   if (forwards) {
-                    console.log(`forwards [${i}, ${m}] x [${index}]`)
+                    // if (x === 0 && y === 0) {
+                    //   console.log(`forwards [${i}, ${m}] x [${index}]`);
+                    //   console.log(`${U[i][m]} x ${YCbCrData[n][index]} = ${U[i][m] * YCbCrData[n][index]}`);
+                    // }
+                    // console.log(`YCbCrData[${n}][${index}] (${i}, ${j}) = ${YCbCrData[n][index]}`)
                     sum += U[i][m] * YCbCrData[n][index];
                   } else {
                     sum += U[m][i] * YCbCrData[n][index];
@@ -237,7 +257,8 @@ function transformData(YCbCrData, width, height, forwards) {
                   }
                 }
               }
-              multResult.push(sum);
+              const index = (x + j) + (y + i) * width;
+              multResult[index] = sum;
             }
           }
         }
@@ -303,5 +324,50 @@ function matrixMult3x3(m1, m2) {
       }
       result.push(sum);
     }
+  }
+}
+
+const demoButtons = Array.from(document.getElementsByClassName('demo-btn'));
+for (let [i, btn] of demoButtons.entries()) {
+  btn.onclick = () => demoButtonClick(i);
+}
+const lionImg = './images/lion-small.jpg';
+const landscapeImg = './images/landscape-small.jpg';
+let activeIndex = -1;
+
+function demoButtonClick(index) {
+  switch (demoButtons[index].textContent) {
+    case 'Lion':
+      if (activeIndex !== index) {
+        img.setAttribute('src', lionImg);
+      } else {
+        img.setAttribute('src', '');
+      }
+      setActive(index);
+      break;
+    case 'Landscape':
+      if (activeIndex !== index) {
+        img.setAttribute('src', landscapeImg);
+      } else {
+        img.setAttribute('src', '');
+      }
+      setActive(index);
+      break;
+    default:
+      console.log('image not supported');
+  }
+}
+
+function setActive(clicked) {
+  let classes = demoButtons[clicked].getAttribute('class');
+  if (activeIndex === clicked) {
+    demoButtons[clicked].setAttribute('class', 'demo-btn');
+    activeIndex = -1;
+  } else {
+    classes += ' active';
+    demoButtons[clicked].setAttribute('class', classes);
+    if (activeIndex >= 0)
+      demoButtons[activeIndex].setAttribute('class', 'demo-btn');
+    activeIndex = clicked;
   }
 }
