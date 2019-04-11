@@ -89,7 +89,7 @@
     </div>
     <p class="text-center">Where A is the 8x8 chunk of pixel data and U is the DCT matrix:</p>
     <div id="dct-container">
-      <img src="images/dct.PNG" id="dct">
+      <img src="images/dct.PNG" id="dctImg">
     </div>
     <br />
     <div id="trans-example-container">
@@ -140,11 +140,12 @@
     </div>
 
     <div class="demo-imgs-container">
-      <img src="" id="image" />
-      <canvas id="Y"></canvas>
-      <canvas id="Cb"></canvas>
-      <canvas id="Cr"></canvas>
-      <canvas id="final"></canvas>
+      <img src="" class="demo-img hide" id="image" />
+      <canvas id="final" class="demo-img hide"></canvas>
+      <canvas id="Y" class="demo-img hide"></canvas>
+      <canvas id="dct" class="demo-img hide"></canvas>
+      <canvas id="Cb" class="demo-img hide"></canvas>
+      <canvas id="Cr" class="demo-img hide"></canvas>
     </div>
     <script src="./scripts/main.js"></script>
 

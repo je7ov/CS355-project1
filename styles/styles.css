@@ -175,6 +175,7 @@ canvas {
 .demo-btn-container {
   display: flex;
   justify-content: center;
+  margin-bottom: 12px;
 }
 
 .demo-btn {
@@ -203,7 +204,23 @@ canvas {
   color: white !important;
 }
 
-.demo-imgs-container {}
+.demo-imgs-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.demo-img {
+  height: auto;
+  visibility: visible;
+  margin: 4px;
+  background-color: #ddd;
+}
+
+.hide {
+  height: 0;
+  visibility: hidden;
+}
 
 @media (min-width: 768px) {
   #content {

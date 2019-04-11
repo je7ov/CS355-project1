@@ -13,12 +13,14 @@ let img = document.getElementById('image');
 let YCanvas = document.getElementById('Y');
 let CbCanvas = document.getElementById('Cb');
 let CrCanvas = document.getElementById('Cr');
+let dctCanvas = document.getElementById('dct');
 let finalCanvas = document.getElementById('final');
 
 let JPEGCompress = () => {
   const YContext = YCanvas.getContext('2d');
   const CbContext = CbCanvas.getContext('2d');
   const CrContext = CrCanvas.getContext('2d');
+  const dctContext = dctCanvas.getContext('2d');
   const finalContext = finalCanvas.getContext('2d');
 
   YCanvas.width = img.width;
@@ -27,6 +29,8 @@ let JPEGCompress = () => {
   CbCanvas.height = img.height;
   CrCanvas.width = img.width;
   CrCanvas.height = img.height;
+  dctCanvas.width = img.width;
+  dctCanvas.height = img.height;
   finalCanvas.width = img.width;
   finalCanvas.height = img.height;
 
@@ -40,18 +44,14 @@ let JPEGCompress = () => {
 
   loadYCbCrData(imgData, YCbCrData);
 
-  // let example = [
-  //   5, 176, 193, 168, 168, 170, 167, 165,
-  //   6, 176, 158, 172, 162, 177, 168, 151,
-  //   5, 167, 172, 232, 158, 61, 145, 214,
-  //   33, 179, 169, 174, 5, 5, 135, 178,
-  //   8, 104, 180, 178, 172, 197, 188, 169,
-  //   63, 5, 102, 101, 160, 142, 133, 139,
-  //   51, 47, 63, 5, 180, 191, 165, 5,
-  //   49, 53, 43, 5, 184, 170, 168, 74
-  // ];
+  // console.log(YCbCrData[0]);
+  // console.log('offsetting data');
+  offsetData(YCbCrData, true);
+  // console.log(YCbCrData[0]);
+  // console.log('transforming data');
+  transformData(YCbCrData, imgData.width, imgData.height, true);
 
-  // YCbCrData[0] = example;
+  console.log(dctCanvas.width, dctCanvas.height);
 
   for (let j = 0; j < imgData.height; j++) {
     for (let i = 0; i < imgData.width; i++) {
@@ -60,47 +60,13 @@ let JPEGCompress = () => {
     }
   }
 
-  YContext.putImageData(imgData, 0, 0);
+  dctContext.putImageData(imgData, 0, 0);
 
-  for (let j = 0; j < imgData.height; j++) {
-    for (let i = 0; i < imgData.width; i++) {
-      const Cb = YCbCrData[1][i + j * imgData.width];
-      setPixelXY(imgData, i, j, [Cb, Cb, Cb, 255]);
-    }
-  }
-
-  CbContext.putImageData(imgData, 0, 0);
-
-  for (let j = 0; j < imgData.height; j++) {
-    for (let i = 0; i < imgData.width; i++) {
-      const Cr = YCbCrData[2][i + j * imgData.width];
-      setPixelXY(imgData, i, j, [Cr, Cr, Cr, 255]);
-    }
-  }
-
-  CrContext.putImageData(imgData, 0, 0);
-
-  // console.log(YCbCrData[0]);
-  // console.log('offsetting data');
-  offsetData(YCbCrData, true);
-  // console.log(YCbCrData[0]);
-  // console.log('transforming data');
-  transformData(YCbCrData, imgData.width, imgData.height, true);
   // console.log(YCbCrData[0]);
   // console.log('quantizing data');
   quantizeData(YCbCrData, imgData.width, imgData.height);
   // console.log(YCbCrData[0]);
   // console.log('unquantizing data');
-
-  // for (let j = 0; j < imgData.height; j++) {
-  //   for (let i = 0; i < imgData.width; i++) {
-  //     const Cr = YCbCrData[2][i + j * imgData.width];
-  //     setPixelXY(imgData, i, j, [Cr, Cr, Cr, 255]);
-  //   }
-  // }
-
-  // CrContext.putImageData(imgData, 0, 0);
-
   unquantizeData(YCbCrData, imgData.width, imgData.height);
   // console.log(YCbCrData[0]);
   // console.log('untransforming data');
@@ -199,31 +165,11 @@ function offsetData(YCbCrData, forwards) {
       if (forwards) {
         YCbCrData[i][j] = YCbCrData[i][j] - 127;
       } else {
-        YCbCrData[i][j] = math.min(math.max(math.round(YCbCrData[i][j] + 127), 0), 255);
+        YCbCrData[i][j] = Math.min(Math.max(Math.round(YCbCrData[i][j] + 127), 0), 255);
       }
     }
   }
 }
-
-// function transformData(YCbCrData, width, height) {
-//   for (let n = 0; n < 3; n++) {
-//     for (let k = 0; k < 2; k++) {
-//       for (let y = 0; y < height; y += 8) {
-//         for (let x = 0; x < width; x += 8) {
-//           let matrix = [];
-//           for (let j = 0; j < 8; j++) {
-//             let row = [];
-//             for (let i = 0; i < 8; i++) {
-//               row.push(YCbCrData[n][x + i][y + j]);
-//             }
-//             matrix.push(row);
-//           }
-//           console.log(math.multiply(U, matrix));
-//         }
-//       }
-//     }
-//   }
-// }
 
 function transformData(YCbCrData, width, height, forwards) {
   let multResult;
@@ -239,11 +185,6 @@ function transformData(YCbCrData, width, height, forwards) {
                 if (k === 0) {
                   const index = (y + m) * width + (x + j);
                   if (forwards) {
-                    // if (x === 0 && y === 0) {
-                    //   console.log(`forwards [${i}, ${m}] x [${index}]`);
-                    //   console.log(`${U[i][m]} x ${YCbCrData[n][index]} = ${U[i][m] * YCbCrData[n][index]}`);
-                    // }
-                    // console.log(`YCbCrData[${n}][${index}] (${i}, ${j}) = ${YCbCrData[n][index]}`)
                     sum += U[i][m] * YCbCrData[n][index];
                   } else {
                     sum += U[m][i] * YCbCrData[n][index];
@@ -263,7 +204,6 @@ function transformData(YCbCrData, width, height, forwards) {
           }
         }
       }
-      // console.log(multResult);
       YCbCrData[n] = multResult;
     }
   }
@@ -301,32 +241,6 @@ function unquantizeData(YCbCrData, width, height) {
   }
 }
 
-// matrixMult3x3(
-//   [1, 2, 3,
-//     2, 3, 4,
-//     3, 4, 5
-//   ],
-//   [3, 2, 1,
-//     2, 3, 1,
-//     4, 2, 3
-//   ]
-// )
-
-function matrixMult3x3(m1, m2) {
-  let result = [];
-  for (let j = 0; j < 3; j++) {
-    for (let i = 0; i < 3; i++) {
-      let sum = 0;
-      for (let m = 0; m < 3; m++) {
-        const index1 = m + j * 3;
-        const index2 = i + m * 3;
-        sum += m1[index1] * m2[index2];
-      }
-      result.push(sum);
-    }
-  }
-}
-
 const demoButtons = Array.from(document.getElementsByClassName('demo-btn'));
 for (let [i, btn] of demoButtons.entries()) {
   btn.onclick = () => demoButtonClick(i);
@@ -338,24 +252,44 @@ let activeIndex = -1;
 function demoButtonClick(index) {
   switch (demoButtons[index].textContent) {
     case 'Lion':
-      if (activeIndex !== index) {
-        img.setAttribute('src', lionImg);
-      } else {
-        img.setAttribute('src', '');
-      }
-      setActive(index);
+      demoButtonClicked(index, lionImg);
       break;
     case 'Landscape':
-      if (activeIndex !== index) {
-        img.setAttribute('src', landscapeImg);
-      } else {
-        img.setAttribute('src', '');
-      }
-      setActive(index);
+      demoButtonClicked(index, landscapeImg);
       break;
     default:
       console.log('image not supported');
   }
+}
+
+function demoButtonClicked(index, newImg) {
+  if (activeIndex !== index) {
+    img.setAttribute('src', newImg);
+    showAll();
+    setTimeout(JPEGCompress, 10);
+  } else {
+    img.setAttribute('src', '');
+    hideAll();
+  }
+  setActive(index);
+}
+
+function showAll() {
+  img.setAttribute('class', 'demo-img');
+  YCanvas.setAttribute('class', 'demo-img');
+  CbCanvas.setAttribute('class', 'demo-img');
+  CrCanvas.setAttribute('class', 'demo-img');
+  dctCanvas.setAttribute('class', 'demo-img');
+  finalCanvas.setAttribute('class', 'demo-img');
+}
+
+function hideAll() {
+  img.setAttribute('class', 'demo-img hide');
+  YCanvas.setAttribute('class', 'demo-img hide');
+  CbCanvas.setAttribute('class', 'demo-img hide');
+  CrCanvas.setAttribute('class', 'demo-img hide');
+  dctCanvas.setAttribute('class', 'demo-img hide');
+  finalCanvas.setAttribute('class', 'demo-img hide');
 }
 
 function setActive(clicked) {
