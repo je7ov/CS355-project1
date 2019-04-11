@@ -238,6 +238,12 @@ const lionImg = './images/lion-small.jpg';
 const landscapeImg = './images/landscape-small.jpg';
 const bokehImg = './images/bokeh-blur-small.jpg';
 const starryNightImg = './images/starry-night-small.jpg';
+// load images to cache
+const preload = new Image();
+preload.src = lionImg;
+preload.src = landscapeImg;
+preload.src = bokehImg;
+preload.src = starryNightImg;
 let activeIndex = -1;
 
 function demoButtonClick(index) {
