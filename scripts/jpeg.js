@@ -217,12 +217,8 @@ const lionImg = './images/lion-small.jpg';
 const landscapeImg = './images/landscape-small.jpg';
 const bokehImg = './images/bokeh-blur-small.jpg';
 const starryNightImg = './images/starry-night-small.jpg';
-// load images to cache
-const preload = new Image();
-preload.src = lionImg;
-preload.src = landscapeImg;
-preload.src = bokehImg;
-preload.src = starryNightImg;
+const fireworksImg = './images/fireworks-small.jpg';
+const nycImg = './images/nyc-small.jpg';
 let activeIndex = -1;
 
 function demoButtonClick(index) {
@@ -239,6 +235,12 @@ function demoButtonClick(index) {
     case 'Starry Night':
       demoButtonClicked(index, starryNightImg);
       break;
+    case 'Fireworks':
+      demoButtonClicked(index, fireworksImg);
+      break;
+    case 'NYC':
+      demoButtonClicked(index, nycImg);
+      break;
     default:
       console.log('image not supported');
   }
@@ -246,10 +248,16 @@ function demoButtonClick(index) {
 
 function demoButtonClicked(index, newImg) {
   if (activeIndex !== index) {
-    img.setAttribute('src', newImg);
     clearCanvases();
-    showAll();
-    setTimeout(JPEGCompress, 100);
+    img.src = '';
+    hideAll();
+    const preload = new Image();
+    preload.onload = () => {
+      showAll();
+      img.src = newImg;
+      JPEGCompress();
+    };
+    preload.src = newImg;
   } else {
     img.setAttribute('src', '');
     hideAll();
@@ -259,26 +267,25 @@ function demoButtonClicked(index, newImg) {
 
 function showAll() {
   for (image of demoImages) {
-    image.setAttribute('class', 'demo-img');
+    image.className = 'demo-img';
   }
 }
 
 function hideAll() {
   for (image of demoImages) {
-    image.setAttribute('class', 'demo-img hide');
+    image.className = 'demo-img hide';
   }
 }
 
 function setActive(clicked) {
-  let classes = demoButtons[clicked].getAttribute('class');
+  let classes = demoButtons[clicked].className;
   if (activeIndex === clicked) {
-    demoButtons[clicked].setAttribute('class', 'demo-btn');
+    demoButtons[clicked].className = 'demo-btn';
     activeIndex = -1;
   } else {
-    classes += ' active';
-    demoButtons[clicked].setAttribute('class', classes);
+    demoButtons[clicked].className += ' active';
     if (activeIndex >= 0)
-      demoButtons[activeIndex].setAttribute('class', 'demo-btn');
+      demoButtons[activeIndex].className = 'demo-btn';
     activeIndex = clicked;
   }
 }
