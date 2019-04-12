@@ -44,51 +44,12 @@ async function JPEGCompress() {
   ];
 
   loadYCbCrData(imgData, YCbCrData);
-
-  let offset = 8 * 11;
-  let matrix = [];
-  console.log('outputting original');
-  for (let j = 0; j < 8; j++) {
-    let row = [];
-    for (let i = 0; i < 8; i++) {
-      index = (i + offset) + (j + offset) * imgData.width;
-      row.push(Math.round(YCbCrData[0][index]));
-    }
-    matrix.push(row);
-  }
-  console.log(matrix);
-
   offsetData(YCbCrData, true);
   transformData(YCbCrData, imgData.width, imgData.height, true);
 
   channelToCanvas(YCbCrData, imgData, dctContext, 0);
 
-  console.log('outputting before quantize');
-  matrix = [];
-  for (let j = 0; j < 8; j++) {
-    let row = [];
-    for (let i = 0; i < 8; i++) {
-      index = (i + offset) + (j + offset) * imgData.width;
-      row.push(+(Math.round(YCbCrData[0][index] + "e+2") + "e-2"));
-    }
-    matrix.push(row);
-  }
-  console.log(matrix);
-
   quantizeData(YCbCrData, imgData.width, imgData.height);
-
-  console.log('outputting after quantize');
-  matrix = [];
-  for (let j = 0; j < 8; j++) {
-    let row = [];
-    for (let i = 0; i < 8; i++) {
-      index = (i + offset) + (j + offset) * imgData.width;
-      row.push(+(Math.round(YCbCrData[0][index] + "e+2") + "e-2"));
-    }
-    matrix.push(row);
-  }
-  console.log(matrix);
-
   unquantizeData(YCbCrData, imgData.width, imgData.height);
   transformData(YCbCrData, imgData.width, imgData.height, false);
   offsetData(YCbCrData, false);
