@@ -34,7 +34,6 @@ async function JPEGCompress() {
   const dctContext = dctCanvas.getContext('2d');
   const finalContext = finalCanvas.getContext('2d');
 
-
   YContext.drawImage(img, 0, 0, YCanvas.width, YCanvas.height);
 
   let imgData = YContext.getImageData(0, 0, YCanvas.width, YCanvas.height);
@@ -46,49 +45,57 @@ async function JPEGCompress() {
 
   loadYCbCrData(imgData, YCbCrData);
 
+  let offset = 8 * 11;
+  let matrix = [];
+  console.log('outputting original');
+  for (let j = 0; j < 8; j++) {
+    let row = [];
+    for (let i = 0; i < 8; i++) {
+      index = (i + offset) + (j + offset) * imgData.width;
+      row.push(Math.round(YCbCrData[0][index]));
+    }
+    matrix.push(row);
+  }
+  console.log(matrix);
+
   offsetData(YCbCrData, true);
   transformData(YCbCrData, imgData.width, imgData.height, true);
 
-  for (let j = 0; j < imgData.height; j++) {
-    for (let i = 0; i < imgData.width; i++) {
-      const Y = YCbCrData[0][i + j * imgData.width];
-      setPixelXY(imgData, i, j, [Y, Y, Y, 255]);
-    }
-  }
+  channelToCanvas(YCbCrData, imgData, dctContext, 0);
 
-  dctContext.putImageData(imgData, 0, 0);
+  console.log('outputting before quantize');
+  matrix = [];
+  for (let j = 0; j < 8; j++) {
+    let row = [];
+    for (let i = 0; i < 8; i++) {
+      index = (i + offset) + (j + offset) * imgData.width;
+      row.push(+(Math.round(YCbCrData[0][index] + "e+2") + "e-2"));
+    }
+    matrix.push(row);
+  }
+  console.log(matrix);
 
   quantizeData(YCbCrData, imgData.width, imgData.height);
+
+  console.log('outputting after quantize');
+  matrix = [];
+  for (let j = 0; j < 8; j++) {
+    let row = [];
+    for (let i = 0; i < 8; i++) {
+      index = (i + offset) + (j + offset) * imgData.width;
+      row.push(+(Math.round(YCbCrData[0][index] + "e+2") + "e-2"));
+    }
+    matrix.push(row);
+  }
+  console.log(matrix);
+
   unquantizeData(YCbCrData, imgData.width, imgData.height);
   transformData(YCbCrData, imgData.width, imgData.height, false);
   offsetData(YCbCrData, false);
 
-  for (let j = 0; j < imgData.height; j++) {
-    for (let i = 0; i < imgData.width; i++) {
-      const Y = YCbCrData[0][i + j * imgData.width];
-      setPixelXY(imgData, i, j, [Y, Y, Y, 255]);
-    }
-  }
-
-  YContext.putImageData(imgData, 0, 0);
-
-  for (let j = 0; j < imgData.height; j++) {
-    for (let i = 0; i < imgData.width; i++) {
-      const Cb = YCbCrData[1][i + j * imgData.width];
-      setPixelXY(imgData, i, j, [Cb, Cb, Cb, 255]);
-    }
-  }
-
-  CbContext.putImageData(imgData, 0, 0);
-
-  for (let j = 0; j < imgData.height; j++) {
-    for (let i = 0; i < imgData.width; i++) {
-      const Cr = YCbCrData[2][i + j * imgData.width];
-      setPixelXY(imgData, i, j, [Cr, Cr, Cr, 255]);
-    }
-  }
-
-  CrContext.putImageData(imgData, 0, 0);
+  channelToCanvas(YCbCrData, imgData, YContext, 0);
+  channelToCanvas(YCbCrData, imgData, CbContext, 1);
+  channelToCanvas(YCbCrData, imgData, CrContext, 2);
 
   loadRGBData(imgData, YCbCrData);
   finalContext.putImageData(imgData, 0, 0);
@@ -108,6 +115,17 @@ function setPixel(imgData, index, pixelData) {
 
 function setPixelXY(imgData, x, y, pixelData) {
   setPixel(imgData, x + y * imgData.width, pixelData);
+}
+
+function channelToCanvas(YCbCrData, imgData, context, channel) {
+  for (let j = 0; j < imgData.height; j++) {
+    for (let i = 0; i < imgData.width; i++) {
+      const value = YCbCrData[channel][i + j * imgData.width];
+      setPixelXY(imgData, i, j, [value, value, value, 255]);
+    }
+  }
+
+  context.putImageData(imgData, 0, 0);
 }
 
 function initializeU() {

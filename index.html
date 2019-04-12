@@ -81,7 +81,8 @@
     <h1 class="text-center">Discrete Cosine Transformation (DCT)</h1>
     <p class="text-center">An important step that transforms each 8x8 chunk of pixels in a way that makes the
       compression much more effective</p>
-    <p class="text-center">Most important thing to note is that it will create a lot of near zero and zero values</p>
+    <p class="text-center">Most important thing to note is that it will create a lot of near zero and zero values in the
+      bottom right corner</p>
     <div class="formulas-container light-background">
       <div class="formulas">
         <p class="formula">B = UAU<sup>T</sup></p>
@@ -117,7 +118,7 @@
       Each element in the 8x8 blocks will be divided by a certain integer and
       then rounded
       <br />
-      The following matrix is used for the division:</p>
+      The following matrix is used for the division and has been psychovisually tuned for the compression:</p>
     <div class="matrix-container">
       <div class="matrix" id="divider-matrix"></div>
     </div>
@@ -167,7 +168,7 @@
         <canvas id="Cr" width="480" height="320"></canvas>
       </div>
     </div>
-    <script src="./scripts/main.js"></script>
+    <script src="./scripts/jpeg.js"></script>
 
     <div class="divider"></div>
 
@@ -185,7 +186,7 @@
     </h2>
   </div>
 
-  <script src="scripts/script.js"></script>
+  <script src="scripts/uiScript.js"></script>
 </body>
 
 </html>
